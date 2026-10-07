@@ -22,7 +22,7 @@ func NewRouter(runtime *Runtime) (http.Handler, error) {
 	router.Use(middleware.Timeout(15 * time.Second))
 	router.Get("/healthz", console.HealthHandler(runtime))
 	router.Handle("/assets/*", console.Static())
-	for _, page := range []string{"/passes", "/antennas", "/rf-chains", "/recordings"} {
+	for _, page := range []string{"/passes", "/antennas", "/rf-chains", "/recordings", "/recovery"} {
 		router.Get(page, pages.Page(page))
 	}
 	router.Route("/api", func(api chi.Router) {
@@ -52,6 +52,7 @@ func NewRouter(runtime *Runtime) (http.Handler, error) {
 		api.Post("/recordings/{segmentID}/frames", runtime.appendFrame)
 		api.Get("/audit", runtime.listAudit)
 		api.Get("/events/{stream}", runtime.listPersistentEvents)
+		api.Post("/recovery/drills", runtime.runRecoveryDrill)
 	})
 	return router, nil
 }

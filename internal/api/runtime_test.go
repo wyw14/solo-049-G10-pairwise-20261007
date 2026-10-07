@@ -25,7 +25,7 @@ func TestOperationsPagesAndAPIsUseRuntimeState(t *testing.T) {
 	}
 	server := httptest.NewServer(router)
 	defer server.Close()
-	for _, target := range []string{"/passes", "/antennas", "/rf-chains", "/recordings", "/healthz", "/api/passes", "/api/antennas", "/api/rf-chains", "/api/recordings"} {
+	for _, target := range []string{"/passes", "/antennas", "/rf-chains", "/recordings", "/recovery", "/healthz", "/api/passes", "/api/antennas", "/api/rf-chains", "/api/recordings"} {
 		response, err := server.Client().Get(server.URL + target)
 		if err != nil {
 			t.Fatalf("GET %s: %v", target, err)
