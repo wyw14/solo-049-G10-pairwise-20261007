@@ -14,6 +14,7 @@ import (
 	passsvc "orbitlink/internal/pass"
 	"orbitlink/internal/receiver"
 	"orbitlink/internal/recorder"
+	"orbitlink/internal/recovery"
 	"orbitlink/internal/rf"
 	"orbitlink/internal/satellite"
 	"orbitlink/internal/scheduler"
@@ -49,6 +50,7 @@ type Runtime struct {
 	RecordingState   *passsvc.RecordingState
 	Handovers        *handover.Coordinator
 	Weather          *weather.Coordinator
+	Recovery         *recovery.Runner
 	sessionsMu       sync.Mutex
 	receiverSessions map[string]*receiver.Session
 }
@@ -123,7 +125,8 @@ func NewRuntime(stateRoot string) (*Runtime, error) {
 		RF: rfController, Recorder: recorderManager, Passes: passes, WindowRecompute: windowRecompute,
 		Replanner: replanner, Extensions: extensions, Deadlines: deadlines, Unlocker: unlocker,
 		Finalizer: finalizer, Attempts: attempts, RecordingState: recordingState,
-		Handovers: handovers, Weather: weatherCoordinator, receiverSessions: make(map[string]*receiver.Session),
+		Handovers: handovers, Weather: weatherCoordinator, Recovery: recovery.NewRunner(stateRoot),
+		receiverSessions: make(map[string]*receiver.Session),
 	}
 	ephemerides.Subscribe(replanner.ApplyRevision)
 	if err := runtime.seed(); err != nil {
